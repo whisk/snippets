@@ -20,13 +20,13 @@ import http.server
 import socketserver
 
 class S(http.server.SimpleHTTPRequestHandler):
-    def _set_headers(self):
+    def _set_headers(self, type='text/html'):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', type)
         self.end_headers()
 
     def do_GET(self):
-        self._set_headers()
+        self._set_headers('json')
         self.wfile.write(b"<html><body><h1>hi!</h1></body></html>")
 
     def do_HEAD(self):
@@ -35,6 +35,7 @@ class S(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         # Doesn't do anything with posted data
         self._set_headers()
+        print(self.rfile.read1(1024))
         self.wfile.write(b'{"str": "a string", "int": 123, "float": 123.567}')
 
 def run(server_class=socketserver.TCPServer, handler_class=S, port=80):
